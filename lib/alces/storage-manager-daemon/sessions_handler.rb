@@ -1,0 +1,42 @@
+require 'yaml'
+
+module Alces
+  module StorageManagerDaemon
+    class SessionsHandler < BlankSlate
+
+      def sessions_for(username)
+        user_sessions_path = ::File.expand_path "~#{username}/.cache/clusterware/sessions"
+        if ::Dir.exist? user_sessions_path
+          session_metadata_glob = ::File.join(user_sessions_path, '*', 'metadata.vars.sh')
+          session_metadata_files = ::Dir.glob(session_metadata_glob)
+          metadata_texts = session_metadata_files.map {|f| ::File.read f}
+          metadata_texts.map {|metadata_text| parse_session(metadata_text)}
+        else
+          # User sessions dir doesn't exist yet => no sessions.
+          []
+        end
+      end
+
+      private
+
+      def parse_session(metadata_text)
+        metadata_hash = {}
+        metadata_text.each_line do |line|
+          key_match = line.match(/vnc\[(\w+)\]/)
+          value_match = line.match('"([^"]+)"')
+
+          if key_match && value_match
+            key = key_match[1].downcase
+            value = value_match[1]
+            metadata_hash[key] = value
+          else
+            metadata_hash['errors'] ||= []
+            metadata_hash['errors'] << line.chomp
+          end
+        end
+        metadata_hash
+      end
+
+    end
+  end
+end
