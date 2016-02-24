@@ -10,25 +10,29 @@ module Alces
           session_metadata_glob = ::File.join(user_sessions_path, '*', 'metadata.vars.sh')
           session_metadata_files = ::Dir.glob(session_metadata_glob)
           metadata_texts = session_metadata_files.map {|f| ::File.read f}
-          metadata_texts.map {|metadata| metadata_hash(metadata)}
+          metadata_texts.map {|metadata_text| parse_session(metadata_text)}
         else
-          # TODO: error handling
-          user_sessions_path
+          # User sessions dir doesn't exist yet => no sessions.
+          []
         end
       end
 
       private
 
-      def metadata_hash(metadata)
-        # TODO: decide format for reporting errors
+      def parse_session(metadata_text)
         metadata_hash = {}
-        metadata.each_line do |line|
+        metadata_text.each_line do |line|
           key_match = line.match(/vnc\[(\w+)\]/)
           value_match = line.match('"([^"]+)"')
 
-          key = key_match[1].downcase
-          value = value_match[1]
-          metadata_hash[key] = value
+          if key_match && value_match
+            key = key_match[1].downcase
+            value = value_match[1]
+            metadata_hash[key] = value
+          else
+            metadata_hash['errors'] ||= []
+            metadata_hash['errors'] << line.chomp
+          end
         end
         metadata_hash
       end
