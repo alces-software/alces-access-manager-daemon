@@ -6,15 +6,23 @@ module Alces
 
       def sessions_for(username)
         user_sessions_path = ::File.expand_path "~#{username}/.cache/clusterware/sessions"
+        metadata_filename ='metadata.vars.sh'
+        session_metadata_glob = ::File.join(user_sessions_path, '*', metadata_filename)
+        session_uuid_regex = /#{::File.join(user_sessions_path, '([^/]+)', metadata_filename)}/
+
+        sessions = []
         if ::Dir.exist? user_sessions_path
-          session_metadata_glob = ::File.join(user_sessions_path, '*', 'metadata.vars.sh')
           session_metadata_files = ::Dir.glob(session_metadata_glob)
-          metadata_texts = session_metadata_files.map {|f| ::File.read f}
-          metadata_texts.map {|metadata_text| parse_session(metadata_text)}
-        else
-          # User sessions dir doesn't exist yet => no sessions.
-          []
+          session_metadata_files.map do |file|
+            metadata_text = ::File.read file
+            session_uuid = file.match(session_uuid_regex)[1]
+            sessions << parse_session(metadata_text).tap do |session|
+              session['uuid'] = session_uuid
+            end
+          end
         end
+
+        sessions
       end
 
       private
