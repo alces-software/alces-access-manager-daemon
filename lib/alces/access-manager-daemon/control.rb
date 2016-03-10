@@ -45,7 +45,6 @@ module Alces
 
       def method_missing(s, *a, &b)
         forker = Forker.new(a.shift)
-        # ::STDERR.puts "calling: #{s} #{a.inspect}"
         if forker.handler_class.method_defined?(s)
           as(forker, s, *a, &b)
         else
