@@ -52,10 +52,6 @@ module Alces
         end
       end
 
-      def forked_io(opts, path, direction = :download)
-        as(IOForker.new(opts, path, direction))
-      end
-
       # implemented to satisfy DRb contracts
       def private_methods; ::Alces::AccessManagerDaemon::Control::PRIVATE_METHODS; end
       def protected_methods; []; end

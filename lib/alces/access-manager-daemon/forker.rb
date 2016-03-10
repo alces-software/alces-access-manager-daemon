@@ -84,8 +84,6 @@ module Alces
               Alces::AccessManagerDaemon.constantize(handler_class)
             when NilClass
               Alces::AccessManagerDaemon::Handler
-            when :io
-              Alces::AccessManagerDaemon::IoHandler
             when Class
               handler_class
             else
