@@ -1,14 +1,14 @@
 #==============================================================================
 # Copyright (C) 2007-2015 Stephen F. Norledge and Alces Software Ltd.
 #
-# This file/package is part of Alces Storage Manager Daemon.
+# This file/package is part of Alces Access Manager Daemon.
 #
-# Alces Storage Manager is free software: you can redistribute it and/or
+# Alces Access Manager is free software: you can redistribute it and/or
 # modify it under the terms of the GNU Affero General Public License
 # as published by the Free Software Foundation, either version 3 of
 # the License, or (at your option) any later version.
 #
-# Alces Storage Manager is distributed in the hope that it will be useful,
+# Alces Access Manager is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Affero General Public License for more details.
@@ -16,19 +16,19 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this package.  If not, see <http://www.gnu.org/licenses/>.
 #
-# For more information on the Alces Storage Manager Daemon, please visit:
-# https://github.com/alces-software/alces-storage-manager-daemon
+# For more information on the Alces Access Manager Daemon, please visit:
+# https://github.com/alces-software/alces-access-manager-daemon
 #==============================================================================
 require 'socket'
 
 module Alces
-  module StorageManagerDaemon
+  module AccessManagerDaemon
     class ForkedIOHandler < ForkHandler
       def handle
         # ensure ssl_context is set up in parent (under root) before
         # we change privileges - we can't access the certificate files
         # under a non-root user
-        Alces::StorageManagerDaemon.ssl_context if ssl?
+        Alces::AccessManagerDaemon.ssl_context if ssl?
         super
       end
 
@@ -75,11 +75,11 @@ module Alces
       end
 
       def ssl?
-        Alces::StorageManagerDaemon.ssl?
+        Alces::AccessManagerDaemon.ssl?
       end
 
       def socket_io(server)
-        ssl? ? Alces::StorageManagerDaemon.ssl_server(server) : server
+        ssl? ? Alces::AccessManagerDaemon.ssl_server(server) : server
       end
 
       def listen

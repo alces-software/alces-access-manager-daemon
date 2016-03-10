@@ -1,7 +1,7 @@
 require 'yaml'
 
 module Alces
-  module StorageManagerDaemon
+  module AccessManagerDaemon
     class SessionsHandler < BlankSlate
 
       def sessions_for(username)

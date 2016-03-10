@@ -1,5 +1,5 @@
-# Rotate Alces Storage Manager Daemon logs
-/var/log/alces-storage-manager-daemon/*.log {
+# Rotate Alces Access Manager Daemon logs
+/var/log/alces-access-manager-daemon/*.log {
   daily
   missingok
   rotate 7

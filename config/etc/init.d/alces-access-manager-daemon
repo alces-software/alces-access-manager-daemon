@@ -2,9 +2,9 @@
 ################################################################################
 # (c) Copyright 2007-2015 Alces Software Ltd & Stephen F Norledge.             #
 #                                                                              #
-# Storage Manager Daemon                                                       #
+# Access Manager Daemon                                                        #
 #                                                                              #
-# This file/package is part of the Storage Manager Daemon.                     #
+# This file/package is part of the Access Manager Daemon.                      #
 #                                                                              #
 # This is free software: you can redistribute it and/or modify it under        #
 # the terms of the GNU Affero General Public License as published by the Free  #
@@ -24,8 +24,8 @@
 #                                                                              #
 ################################################################################
 # chkconfig: 2345 91 01
-# alces-storage-manager-daemon: start/stop alces storage-manager-daemon
-# description: start/stop alces storage-manager-daemon
+# alces-access-manager-daemon: start/stop alces access-manager-daemon
+# description: start/stop alces access-manager-daemon
 #
 . /etc/rc.d/init.d/functions
 
@@ -38,21 +38,21 @@ export RUBY_HOME=/opt/alces/ruby
 export PATH=/opt/alces/ruby/bin:$PATH
 export LD_LIBRARY_PATH=/opt/alces/ruby/lib:$LD_LIBRARY_PATH
 
-PID_FILE=/var/run/alces-storage-manager-daemon.pid
-DAEMON_HOME=/opt/alces/alces-storage-manager-daemon
-DAEMON_CMD="$DAEMON_HOME/bin/alces-storage-manager-daemon start --pidfile $PID_FILE -e production"
-START_LOG=/var/log/alces-storage-manager-daemon-init.log
+PID_FILE=/var/run/alces-access-manager-daemon.pid
+DAEMON_HOME=/opt/alces/alces-access-manager-daemon
+DAEMON_CMD="$DAEMON_HOME/bin/alces-access-manager-daemon start --pidfile $PID_FILE -e production"
+START_LOG=/var/log/alces-access-manager-daemon-init.log
 
 start()
 {
-  echo -n Starting Alces Storage Manager daemon:
+  echo -n Starting Alces Access Manager daemon:
   cd $DAEMON_HOME
   $DAEMON_CMD &> $START_LOG
   sleep 2
   PID=`pidofproc -p $PID_FILE`
   if [ -n $PID ]; then
     if checkpid $PID; then 
-        touch /var/lock/subsys/alces-storage-manager-daemon
+        touch /var/lock/subsys/alces-access-manager-daemon
         success
         RETVAL=0
     else
@@ -69,7 +69,7 @@ start()
 
 restart()
 {
-  echo -n Restarting Alces Storage Manager daemon:
+  echo -n Restarting Alces Access Manager daemon:
   PID=`pidofproc -p $PID_FILE`
   kill $PID
   sleep 1
@@ -95,7 +95,7 @@ restart()
 
 stop()
 {
-  echo -n "Stopping Alces Storage Manager daemon:"
+  echo -n "Stopping Alces Access Manager daemon:"
   PID=`pidofproc -p $PID_FILE`
   kill $PID
   sleep 1
@@ -103,7 +103,7 @@ stop()
       failure
       RETVAL=1
   else
-      rm -f /var/lock/subsys/alces-storage-manager-daemon
+      rm -f /var/lock/subsys/alces-access-manager-daemon
       rm -f $PID_FILE
       success
       RETVAL=0

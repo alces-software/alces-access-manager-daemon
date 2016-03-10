@@ -1,16 +1,16 @@
 require 'yaml'
 
 module Alces
-  module StorageManagerDaemon
+  module AccessManagerDaemon
     class TargetsHandler < BlankSlate
 
       def self.global_targets
-        globaldir = "/etc/xdg/clusterware/storage/"
+        globaldir = "/etc/xdg/clusterware/access/"
         @global_targets ||= TargetsHandler::load_from_directory(globaldir)
       end
 
       def user_targets(username)
-        userdir = ::Dir.home + "/.config/clusterware/storage/"
+        userdir = ::Dir.home + "/.config/clusterware/access/"
         TargetsHandler::load_from_directory(userdir)
       end
 
@@ -53,4 +53,4 @@ module Alces
   end
 end
 
-Alces::StorageManagerDaemon::TargetsHandler.global_targets() # Initialise on startup (as root)
+Alces::AccessManagerDaemon::TargetsHandler.global_targets() # Initialise on startup (as root)
