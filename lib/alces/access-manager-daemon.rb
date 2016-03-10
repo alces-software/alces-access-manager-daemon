@@ -63,7 +63,7 @@ module Alces
       def default_config
         super.
           merge({
-                  port: 25268,
+                  port: 25269,
                   log_file: File.join(DaemonKit.root,'log','daemon.log'),
                   configs: ['ssl']
                 })
