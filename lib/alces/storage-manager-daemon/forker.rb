@@ -55,7 +55,7 @@ module Alces
         def timeout_for(opts)
           opts.is_a?(Hash) && opts[:timeout]
         end
-        
+
         def handler_args_for(opts)
           case opts
           when Hash

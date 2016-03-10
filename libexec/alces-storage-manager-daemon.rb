@@ -65,7 +65,7 @@ end
 # Add to the term_proc to disable thread safe logging in order to
 # defeat Ruby 2.0 requirement for no mutexes in trap handlers.
 daemon_kit_term_proc = trap('INT', 'IGNORE')
-term_proc = Proc.new do 
+term_proc = Proc.new do
   DaemonKit.logger.thread_safety_disabled = true
   daemon_kit_term_proc.call
 end

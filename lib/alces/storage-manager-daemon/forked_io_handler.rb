@@ -54,7 +54,7 @@ module Alces
       def server
         @server ||= TCPServer.new(0)
       end
-      
+
       def setup
         @rd.close
         forker.change_privilege

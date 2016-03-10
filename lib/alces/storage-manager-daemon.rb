@@ -56,7 +56,7 @@ module Alces
         self.ssl = config
       end
     end
-    
+
     class << self
       include Alces::Tools::SSLConfigurator
 
@@ -68,7 +68,7 @@ module Alces
                   configs: ['ssl']
                 })
       end
-      
+
       def ssl
         config.ssl
       end

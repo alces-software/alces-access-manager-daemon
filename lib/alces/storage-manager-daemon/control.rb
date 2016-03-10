@@ -24,7 +24,7 @@ require 'rpam'
 module Alces
   module StorageManagerDaemon
     class Control < BlankSlate
-      
+
       # authenticate needs to exist here since we don't want it to fork and
       # execute with another user's privileges.
       def authenticate?(options, user, pass)
@@ -52,11 +52,11 @@ module Alces
           super
         end
       end
-      
+
       def forked_io(opts, path, direction = :download)
         as(IOForker.new(opts, path, direction))
       end
-      
+
       # implemented to satisfy DRb contracts
       def private_methods; ::Alces::StorageManagerDaemon::Control::PRIVATE_METHODS; end
       def protected_methods; []; end
