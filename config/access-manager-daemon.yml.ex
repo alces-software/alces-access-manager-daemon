@@ -1,5 +1,5 @@
 interfaces: ['*']
-port: 25268
+port: 25269
 configs:
   - ssl
 

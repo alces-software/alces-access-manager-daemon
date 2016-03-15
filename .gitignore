@@ -6,7 +6,7 @@ test/docs
 log/*.log
 *~
 config/ssl.yml
-config/storage-manager-daemon.yml
+config/access-manager-daemon.yml
 vendor/alces/config/local_config.yml
 tmp/*
 script/test/websockify/__pycache__/
