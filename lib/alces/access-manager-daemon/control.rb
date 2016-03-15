@@ -31,6 +31,12 @@ module Alces
         ::Rpam.auth(user, pass)
       end
 
+      # ping exists here to just return true if the client was successfully
+      # able to reach us.
+      def ping(options) # Argument is required for remote call to work.
+        true
+      end
+
       PRIVATE_METHODS = [ :as,
                           :to_s,
                           :class,
