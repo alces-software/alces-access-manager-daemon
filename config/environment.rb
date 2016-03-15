@@ -9,5 +9,5 @@ Bundler.require :default, DaemonKit.env
 DaemonKit::Initializer.run do |config|
 
   # The name of the daemon as reported by process monitoring tools
-  config.daemon_name = 'alces-storage-manager-daemon'
+  config.daemon_name = 'alces-access-manager-daemon'
 end
