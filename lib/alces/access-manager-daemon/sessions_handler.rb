@@ -25,18 +25,29 @@ module Alces
         {sessions: sessions, session_types: session_types}
       end
 
+      def launch_session(session_type)
+        user_home = ::Kernel.send(:`, 'whoami').strip
+        ::ENV['HOME'] = ::Kernel.send(:`, "echo ~#{user_home}").strip
+        alces_command = ::File.join(clusterware_root, '/bin/alces')
+        launch_session_command = "#{alces_command} session start #{session_type}"
+        ::Kernel.send(:`, launch_session_command)
+      end
+
       private
 
       # Find all the dirs in $cw_ROOT/etc/sessions with a `session.sh` script;
       # these are the available session types for this cluster.
       def session_types
-        clusterware_root = ::ENV['cw_ROOT'] || '/opt/clusterware'
         session_types_dir = ::File.join(clusterware_root, '/etc/sessions')
         session_creation_filename = 'session.sh'
         ::Dir.entries(session_types_dir).select do |dir|
           dir_path = ::File.join(session_types_dir, dir)
           ::Dir.exist?(dir_path) && ::Dir.entries(dir_path).include?(session_creation_filename)
         end
+      end
+
+      def clusterware_root
+        ::ENV['cw_ROOT'] || '/opt/clusterware'
       end
 
       def parse_session(metadata_text)
