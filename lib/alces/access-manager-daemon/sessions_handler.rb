@@ -22,10 +22,22 @@ module Alces
           end
         end
 
-        sessions
+        {sessions: sessions, session_types: session_types}
       end
 
       private
+
+      # Find all the dirs in $cw_ROOT/etc/sessions with a `session.sh` script;
+      # these are the available session types for this cluster.
+      def session_types
+        clusterware_root = ::ENV['cw_ROOT'] || '/opt/clusterware'
+        session_types_dir = ::File.join(clusterware_root, '/etc/sessions')
+        session_creation_filename = 'session.sh'
+        ::Dir.entries(session_types_dir).select do |dir|
+          dir_path = ::File.join(session_types_dir, dir)
+          ::Dir.exist?(dir_path) && ::Dir.entries(dir_path).include?(session_creation_filename)
+        end
+      end
 
       def parse_session(metadata_text)
         metadata_hash = {}
