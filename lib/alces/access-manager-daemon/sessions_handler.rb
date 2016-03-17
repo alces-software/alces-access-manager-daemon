@@ -26,11 +26,20 @@ module Alces
       end
 
       def launch_session(session_type)
-        user_home = ::Kernel.send(:`, 'whoami').strip
-        ::ENV['HOME'] = ::Kernel.send(:`, "echo ~#{user_home}").strip
+        # TODO:
+        # - Check session_type is valid.
+        # - Doesn't work properly, sessions die when the daemon dies.
+
+        # This hack is needed to set $HOME to the correct value for the current
+        # user we are acting as; this is not done when we setuid to act as this
+        # user but is needed to create sessions as them.
+        # TODO: do this a nicer way?
+        user_home = run('whoami').strip
+        ::ENV['HOME'] = run("echo ~#{user_home}").strip
+
         alces_command = ::File.join(clusterware_root, '/bin/alces')
         launch_session_command = "#{alces_command} session start #{session_type}"
-        ::Kernel.send(:`, launch_session_command)
+        run(launch_session_command)
       end
 
       private
@@ -48,6 +57,13 @@ module Alces
 
       def clusterware_root
         ::ENV['cw_ROOT'] || '/opt/clusterware'
+      end
+
+      # Run a shell command with backtick operator; need to do this this way as
+      # no methods from Kernel are defined within this class (I assume to
+      # prevent security holes as methods are being executed remotely).
+      def run(command)
+        ::Kernel.send(:`, command)
       end
 
       def parse_session(metadata_text)
