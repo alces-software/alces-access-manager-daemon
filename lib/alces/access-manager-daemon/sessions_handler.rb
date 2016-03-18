@@ -39,7 +39,10 @@ module Alces
 
         alces_command = ::File.join(clusterware_root, '/bin/alces')
         launch_session_command = "#{alces_command} session start #{session_type}"
-        run(launch_session_command)
+
+        # Run command in new session using setsid, so VNC session does not exit
+        # if daemon is stopped.
+        run("setsid #{launch_session_command}")
       end
 
       private
