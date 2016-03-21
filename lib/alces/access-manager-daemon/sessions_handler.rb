@@ -41,10 +41,8 @@ module Alces
         launch_session_command = "#{alces_command} session start #{session_type}"
 
         # Run command in new session using setsid, so VNC session does not exit
-        # if daemon is stopped. Also start in background and redirect
-        # stdin/stdout to /dev/null so this method does not need to wait for
-        # the session to start to return.
-        run("setsid #{launch_session_command} < /dev/null &>/dev/null &")
+        # if daemon is stopped.
+        run("setsid #{launch_session_command}")
       end
 
       private
