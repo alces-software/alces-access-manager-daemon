@@ -22,10 +22,52 @@ module Alces
           end
         end
 
-        sessions
+        {sessions: sessions, session_types: session_types}
+      end
+
+      def launch_session(session_type)
+        # TODO:
+        # - Check session_type is valid.
+        # - Doesn't work properly, sessions die when the daemon dies.
+
+        # This hack is needed to set $HOME to the correct value for the current
+        # user we are acting as; this is not done when we setuid to act as this
+        # user but is needed to create sessions as them.
+        # TODO: do this a nicer way?
+        user_home = run('whoami').strip
+        ::ENV['HOME'] = run("echo ~#{user_home}").strip
+
+        alces_command = ::File.join(clusterware_root, '/bin/alces')
+        launch_session_command = "#{alces_command} session start #{session_type}"
+
+        # Run command in new session using setsid, so VNC session does not exit
+        # if daemon is stopped.
+        run("setsid #{launch_session_command}")
       end
 
       private
+
+      # Find all the dirs in $cw_ROOT/etc/sessions with a `session.sh` script;
+      # these are the available session types for this cluster.
+      def session_types
+        session_types_dir = ::File.join(clusterware_root, '/etc/sessions')
+        session_creation_filename = 'session.sh'
+        ::Dir.entries(session_types_dir).select do |dir|
+          dir_path = ::File.join(session_types_dir, dir)
+          ::Dir.exist?(dir_path) && ::Dir.entries(dir_path).include?(session_creation_filename)
+        end
+      end
+
+      def clusterware_root
+        ::ENV['cw_ROOT'] || '/opt/clusterware'
+      end
+
+      # Run a shell command with backtick operator; need to do this this way as
+      # no methods from Kernel are defined within this class (I assume to
+      # prevent security holes as methods are being executed remotely).
+      def run(command)
+        ::Kernel.send(:`, command)
+      end
 
       def parse_session(metadata_text)
         metadata_hash = {}
