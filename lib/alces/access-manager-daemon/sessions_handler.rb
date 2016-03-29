@@ -25,7 +25,7 @@ module Alces
         {sessions: sessions, session_types: session_types}
       end
 
-      def launch_session(session_type)
+      def launch_session(session_type, request_compute_node=false)
         # TODO:
         # - Check session_type is valid.
         # - Doesn't work properly, sessions die when the daemon dies.
@@ -37,12 +37,22 @@ module Alces
         user_home = run('whoami').strip
         ::ENV['HOME'] = run("echo ~#{user_home}").strip
 
-        alces_command = ::File.join(clusterware_root, '/bin/alces')
-        launch_session_command = "#{alces_command} session start #{session_type}"
+        # Different command used to launch sessions on login node (node this
+        # daemon is running on) vs requesting a session on any available
+        # compute node.
+        if request_compute_node
+          launch_session_command = "qdesktop #{session_type}"
+        else
+          alces_command = ::File.join(clusterware_root, '/bin/alces')
+          launch_session_command = "#{alces_command} session start #{session_type}"
+        end
 
+        # Source clusterware shell configuration before launching session;
+        # required for environment to be setup for qdesktop to work correctly.
+        # TODO: Better way to do this?
         # Run command in new session using setsid, so VNC session does not exit
         # if daemon is stopped.
-        run("setsid #{launch_session_command}")
+        run("source /etc/profile.d/alces-clusterware.sh && setsid #{launch_session_command}")
       end
 
       private
