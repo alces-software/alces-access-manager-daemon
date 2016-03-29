@@ -28,7 +28,6 @@ module Alces
       def launch_session(session_type, request_compute_node=false)
         # TODO:
         # - Check session_type is valid.
-        # - Doesn't work properly, sessions die when the daemon dies.
 
         # This hack is needed to set $HOME to the correct value for the current
         # user we are acting as; this is not done when we setuid to act as this
