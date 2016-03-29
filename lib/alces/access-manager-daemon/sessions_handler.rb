@@ -51,7 +51,13 @@ module Alces
         # TODO: Better way to do this?
         # Run command in new session using setsid, so VNC session does not exit
         # if daemon is stopped.
-        run("source /etc/profile.d/alces-clusterware.sh && setsid #{launch_session_command}")
+        launch_output = run("source /etc/profile.d/alces-clusterware.sh && setsid #{launch_session_command}")
+
+        if $?.exitstatus != 0
+          launch_output # Return output with reason for failure.
+        else
+          true # Success.
+        end
       end
 
       private
