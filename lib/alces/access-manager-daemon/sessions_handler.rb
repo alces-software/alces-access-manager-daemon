@@ -7,7 +7,8 @@ module Alces
       def sessions_info(username)
         {
           sessions: sessions_for(username),
-          session_types: session_types
+          session_types: session_types,
+          can_launch_compute_sessions: qdesktop_available
         }
       end
 
@@ -106,6 +107,11 @@ module Alces
           end
         end
         metadata_hash
+      end
+
+      def qdesktop_available
+        run '/bin/bash -c "type qdesktop"'
+        return $?.exitstatus == 0
       end
 
     end
