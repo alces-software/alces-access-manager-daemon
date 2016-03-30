@@ -4,25 +4,11 @@ module Alces
   module AccessManagerDaemon
     class SessionsHandler < BlankSlate
 
-      def sessions_for(username)
-        user_sessions_path = ::File.expand_path "~#{username}/.cache/clusterware/sessions"
-        metadata_filename ='metadata.vars.sh'
-        session_metadata_glob = ::File.join(user_sessions_path, '*', metadata_filename)
-        session_uuid_regex = /#{::File.join(user_sessions_path, '([^/]+)', metadata_filename)}/
-
-        sessions = []
-        if ::Dir.exist? user_sessions_path
-          session_metadata_files = ::Dir.glob(session_metadata_glob)
-          session_metadata_files.map do |file|
-            metadata_text = ::File.read file
-            session_uuid = file.match(session_uuid_regex)[1]
-            sessions << parse_session(metadata_text).tap do |session|
-              session['uuid'] = session_uuid
-            end
-          end
-        end
-
-        {sessions: sessions, session_types: session_types}
+      def sessions_info(username)
+        {
+          sessions: sessions_for(username),
+          session_types: session_types
+        }
       end
 
       def launch_session(session_type, request_compute_node=false)
@@ -61,6 +47,26 @@ module Alces
       end
 
       private
+
+      def sessions_for(username)
+        user_sessions_path = ::File.expand_path "~#{username}/.cache/clusterware/sessions"
+        metadata_filename ='metadata.vars.sh'
+        session_metadata_glob = ::File.join(user_sessions_path, '*', metadata_filename)
+        session_uuid_regex = /#{::File.join(user_sessions_path, '([^/]+)', metadata_filename)}/
+
+        sessions = []
+        if ::Dir.exist? user_sessions_path
+          session_metadata_files = ::Dir.glob(session_metadata_glob)
+          session_metadata_files.map do |file|
+            metadata_text = ::File.read file
+            session_uuid = file.match(session_uuid_regex)[1]
+            sessions << parse_session(metadata_text).tap do |session|
+              session['uuid'] = session_uuid
+            end
+          end
+        end
+        sessions
+      end
 
       # Find all the dirs in $cw_ROOT/etc/sessions with a `session.sh` script;
       # these are the available session types for this cluster.
