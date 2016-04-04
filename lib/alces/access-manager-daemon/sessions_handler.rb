@@ -1,3 +1,4 @@
+
 require 'yaml'
 
 module Alces
@@ -5,23 +6,19 @@ module Alces
     class SessionsHandler < BlankSlate
 
       def sessions_info(username)
+        set_correct_user_home
         {
           sessions: sessions_for(username),
           session_types: session_types,
-          can_launch_compute_sessions: qdesktop_available
+          can_launch_compute_sessions: qdesktop_available,
+          has_vpn: vpn_handler_enabled
         }
       end
 
       def launch_session(session_type, request_compute_node=false)
-        # TODO:
-        # - Check session_type is valid.
+        set_correct_user_home
 
-        # This hack is needed to set $HOME to the correct value for the current
-        # user we are acting as; this is not done when we setuid to act as this
-        # user but is needed to create sessions as them.
-        # TODO: do this a nicer way?
-        user_home = run('whoami').strip
-        ::ENV['HOME'] = run("echo ~#{user_home}").strip
+        # TODO: Check session_type is valid.
 
         # Different command used to launch sessions on login node (node this
         # daemon is running on) vs requesting a session on any available
@@ -29,7 +26,6 @@ module Alces
         if request_compute_node
           launch_session_command = "qdesktop #{session_type}"
         else
-          alces_command = ::File.join(clusterware_root, '/bin/alces')
           launch_session_command = "#{alces_command} session start #{session_type}"
         end
 
@@ -47,7 +43,23 @@ module Alces
         end
       end
 
+      def vpn_config
+        # Return the tarred, gzipped VPN config to the server where it can be
+        # offered for download.
+        run "cd #{clusterware_root}/etc/openvpn/client/clusterware/ && tar -zcf - *"
+      end
+
       private
+
+      def set_correct_user_home
+        # This hack is needed to set $HOME to the correct value for the current
+        # user we are acting as; this is not done when we setuid to act as this
+        # user but is needed to correctly run clusterware `alces` commands as
+        # them.
+        # TODO: do this a nicer way?
+        user_home = run('whoami').strip
+        ::ENV['HOME'] = run("echo ~#{user_home}").strip
+      end
 
       def sessions_for(username)
         user_sessions_path = ::File.expand_path "~#{username}/.cache/clusterware/sessions"
@@ -84,6 +96,10 @@ module Alces
         ::ENV['cw_ROOT'] || '/opt/clusterware'
       end
 
+      def alces_command
+        ::File.join(clusterware_root, '/bin/alces')
+      end
+
       # Run a shell command with backtick operator; need to do this this way as
       # no methods from Kernel are defined within this class (I assume to
       # prevent security holes as methods are being executed remotely).
@@ -112,6 +128,12 @@ module Alces
       def qdesktop_available
         run '/bin/bash -c "type qdesktop >/dev/null 2>&1"'
         return $?.exitstatus == 0
+      end
+
+      def vpn_handler_enabled
+        vpn_handler_enabled_regex = /^\[\*\].*base.*\/.*cluster-vpn.*$/
+        available_handlers = run "#{alces_command} handler avail"
+        !!(available_handlers =~ vpn_handler_enabled_regex)
       end
 
     end
