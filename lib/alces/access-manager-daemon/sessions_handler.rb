@@ -6,6 +6,7 @@ module Alces
     class SessionsHandler < BlankSlate
 
       def sessions_info(username)
+        set_correct_user_home
         {
           sessions: sessions_for(username),
           session_types: session_types,
@@ -15,15 +16,9 @@ module Alces
       end
 
       def launch_session(session_type, request_compute_node=false)
-        # TODO:
-        # - Check session_type is valid.
+        set_correct_user_home
 
-        # This hack is needed to set $HOME to the correct value for the current
-        # user we are acting as; this is not done when we setuid to act as this
-        # user but is needed to create sessions as them.
-        # TODO: do this a nicer way?
-        user_home = run('whoami').strip
-        ::ENV['HOME'] = run("echo ~#{user_home}").strip
+        # TODO: Check session_type is valid.
 
         # Different command used to launch sessions on login node (node this
         # daemon is running on) vs requesting a session on any available
@@ -55,6 +50,16 @@ module Alces
       end
 
       private
+
+      def set_correct_user_home
+        # This hack is needed to set $HOME to the correct value for the current
+        # user we are acting as; this is not done when we setuid to act as this
+        # user but is needed to correctly run clusterware `alces` commands as
+        # them.
+        # TODO: do this a nicer way?
+        user_home = run('whoami').strip
+        ::ENV['HOME'] = run("echo ~#{user_home}").strip
+      end
 
       def sessions_for(username)
         user_sessions_path = ::File.expand_path "~#{username}/.cache/clusterware/sessions"
