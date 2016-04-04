@@ -1,3 +1,4 @@
+
 require 'yaml'
 
 module Alces
@@ -45,6 +46,12 @@ module Alces
         else
           true # Success.
         end
+      end
+
+      def vpn_config
+        # Return the tarred, gzipped VPN config to the server where it can be
+        # offered for download.
+        run "cd #{clusterware_root}/etc/openvpn/client/clusterware/ && tar -zcf - *"
       end
 
       private
