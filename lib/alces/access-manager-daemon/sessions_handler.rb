@@ -9,7 +9,8 @@ module Alces
         {
           sessions: sessions_for(username),
           session_types: session_types,
-          can_launch_compute_sessions: qdesktop_available
+          can_launch_compute_sessions: qdesktop_available,
+          has_vpn: vpn_handler_enabled
         }
       end
 
@@ -30,7 +31,6 @@ module Alces
         if request_compute_node
           launch_session_command = "qdesktop #{session_type}"
         else
-          alces_command = ::File.join(clusterware_root, '/bin/alces')
           launch_session_command = "#{alces_command} session start #{session_type}"
         end
 
@@ -91,6 +91,10 @@ module Alces
         ::ENV['cw_ROOT'] || '/opt/clusterware'
       end
 
+      def alces_command
+        ::File.join(clusterware_root, '/bin/alces')
+      end
+
       # Run a shell command with backtick operator; need to do this this way as
       # no methods from Kernel are defined within this class (I assume to
       # prevent security holes as methods are being executed remotely).
@@ -119,6 +123,12 @@ module Alces
       def qdesktop_available
         run '/bin/bash -c "type qdesktop >/dev/null 2>&1"'
         return $?.exitstatus == 0
+      end
+
+      def vpn_handler_enabled
+        vpn_handler_enabled_regex = /^\[\*\].*base.*\/.*cluster-vpn.*$/
+        available_handlers = run "#{alces_command} handler avail"
+        !!(available_handlers =~ vpn_handler_enabled_regex)
       end
 
     end
