@@ -128,7 +128,7 @@ module Alces
 
       def qdesktop_available
         run '/bin/bash -c "type qdesktop >/dev/null 2>&1"'
-        return $?.exitstatus == 0
+        $?.exitstatus == 0
       end
 
       def node_public_ip
