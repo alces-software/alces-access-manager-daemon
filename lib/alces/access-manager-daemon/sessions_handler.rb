@@ -11,7 +11,8 @@ module Alces
           sessions: sessions_for(username),
           session_types: session_types,
           can_launch_compute_sessions: qdesktop_available,
-          has_vpn: vpn_handler_enabled
+          has_vpn: vpn_handler_enabled,
+          login_ip: node_public_ip,
         }
       end
 
@@ -127,7 +128,14 @@ module Alces
 
       def qdesktop_available
         run '/bin/bash -c "type qdesktop >/dev/null 2>&1"'
-        return $?.exitstatus == 0
+        $?.exitstatus == 0
+      end
+
+      def node_public_ip
+        node_info = run "#{alces_command} about node"
+        ip_address_regex = /IP address:\s+([\w\.]+)/
+        match = ip_address_regex.match(node_info)
+        match[1] if match
       end
 
       def vpn_handler_enabled
