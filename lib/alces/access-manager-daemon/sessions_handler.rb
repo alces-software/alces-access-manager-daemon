@@ -13,6 +13,7 @@ module Alces
           can_launch_compute_sessions: qdesktop_available,
           has_vpn: vpn_handler_enabled,
           login_ip: node_public_ip,
+          proxy_address: node_access_address,
         }
       end
 
@@ -135,6 +136,13 @@ module Alces
         node_info = run "#{alces_command} about node"
         ip_address_regex = /IP address:\s+([\w\.]+)/
         match = ip_address_regex.match(node_info)
+        match[1] if match
+      end
+
+      def node_access_address
+        access_info = run "#{alces_command} about access"
+        access_address_regex = /Access host name:\s+([^\s]+)/
+        match = access_address_regex.match(access_info)
         match[1] if match
       end
 
