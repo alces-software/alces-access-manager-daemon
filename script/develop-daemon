@@ -1,0 +1,5 @@
+#!/bin/sh
+
+sudo systemctl stop clusterware-alces-access-manager-daemon && \
+    cd /media/host/alces-access-manager-daemon/ && \
+    rvmsudo bin/alces-access-manager-daemon

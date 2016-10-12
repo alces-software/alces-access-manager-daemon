@@ -8,18 +8,24 @@ https://github.com/alces-software/alces-access-manager/dev/multiple-nodes-el7/lo
 Setting up for development within daemon directory in Clusterware environment:
 
 - Install RVM: https://rvm.io/
-- `rvm install ruby-2.2.1`
-- `cd /media/host/alces-access-manager-daemon`
-- `gem install bundler`
-- `sudo yum install git pam-devel ruby-devel -y`
-- `bundle install`
+- Install dependencies:
 
+  ```
+  rvm install ruby-2.2.1
+  cd /media/host/alces-access-manager-daemon
+  gem install bundler
+  sudo yum install git pam-devel ruby-devel -y
+  bundle install
+  ```
 
 Running the daemon:
 
-- Kill any existing daemon in environment: `sudo systemctl stop clusterware-alces-access-manager-daemon.service`
-- Start development daemon: `cd /media/host/alces-access-manager-daemon && rvmsudo bin/alces-access-manager-daemon`
+```
+/media/host/script/develop-daemon
+```
 
 To forward daemon port:
 
-  - `ssh -L 25269:10.0.2.15:25269 -p 2222 vagrant@localhost`
+```
+ssh -L 25269:10.0.2.15:25269 -p 2222 vagrant@localhost
+```
