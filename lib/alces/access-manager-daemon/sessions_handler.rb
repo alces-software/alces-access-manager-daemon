@@ -26,7 +26,7 @@ module Alces
         # daemon is running on) vs requesting a session on any available
         # compute node.
         if request_compute_node
-          launch_session_command = "qdesktop #{session_type}"
+          launch_session_command = "#{qdesktop_command} #{session_type}"
         else
           launch_session_command = "#{alces_command} session start #{session_type}"
         end
@@ -102,6 +102,10 @@ module Alces
         ::File.join(clusterware_root, '/bin/alces')
       end
 
+      def qdesktop_command
+        ::File.join(clusterware_root, '/opt/gridscheduler/bin/linux-x64/qdesktop')
+      end
+
       # Run a shell command with backtick operator; need to do this this way as
       # no methods from Kernel are defined within this class (I assume to
       # prevent security holes as methods are being executed remotely).
@@ -128,8 +132,7 @@ module Alces
       end
 
       def qdesktop_available
-        run '/bin/bash -c "type qdesktop >/dev/null 2>&1"'
-        $?.exitstatus == 0
+        ::File.file? qdesktop_command
       end
 
       def node_public_ip
