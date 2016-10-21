@@ -1,12 +1,12 @@
 GIT
-  remote: git://github.com/alces-software/alces-tools.git
+  remote: https://github.com/alces-software/alces-tools.git
   revision: 39f56e4dc1289b3fe37a3318e267edb08c97d918
   tag: 0.13.0
   specs:
     alces-tools (0.13.0)
 
 GIT
-  remote: git://github.com/alces-software/arriba.git
+  remote: https://github.com/alces-software/arriba.git
   revision: 343b1410e46db5c8c98119945f7a25e4e98386a2
   branch: 0.6-stable
   specs:
