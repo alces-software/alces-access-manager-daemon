@@ -28,7 +28,9 @@ module Alces
       # authenticate needs to exist here since we don't want it to fork and
       # execute with another user's privileges.
       def authenticate?(options, user, pass)
-        ::Rpam.auth(user, pass)
+        ::Rpam.auth(
+          user, pass, session: true, service: 'alces-access-manager-daemon'
+        )
       end
 
       # ping exists here to just return true if the client was successfully

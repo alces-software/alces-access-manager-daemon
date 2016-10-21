@@ -26,6 +26,8 @@ source "http://rubygems.org"
 
 ruby ENV['ALCES_RUBY_VERSION'] || '2.2.1'
 
+git_source(:alces_github) { |repo_name| "https://github.com/alces-software/#{repo_name}.git" }
+
 ##################################
 # Application server
 ##################################
@@ -34,17 +36,17 @@ gem                   'daemon-kit'
 ##################################
 # Alces utility gems
 ##################################
-gem              'alces-tools', :github => 'alces-software/alces-tools', :tag => '0.13.0'
+gem              'alces-tools', alces_github: 'alces-tools', :tag => '0.13.0'
 
 ##################################
 # Alces Stack
 ##################################
-gem                   'arriba', :github => 'alces-software/arriba', :branch => '0.6-stable'
+gem                   'arriba', alces_github: 'arriba', :branch => '0.6-stable'
 
 ##################################
 # PAM
 ##################################
-gem 				'rpam-ruby19'
+gem 		 'rpam-ruby19', alces_github: 'rpam-ruby19'
 
 ##################################
 # Testing
