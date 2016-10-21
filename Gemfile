@@ -26,6 +26,8 @@ source "http://rubygems.org"
 
 ruby ENV['ALCES_RUBY_VERSION'] || '2.2.1'
 
+git_source(:alces_github) { |repo_name| "https://github.com/alces-software/#{repo_name}.git" }
+
 ##################################
 # Application server
 ##################################
@@ -44,7 +46,7 @@ gem                   'arriba', :github => 'alces-software/arriba', :branch => '
 ##################################
 # PAM
 ##################################
-gem 				'rpam-ruby19'
+gem 		 'rpam-ruby19', alces_github: 'rpam-ruby19'
 
 ##################################
 # Testing

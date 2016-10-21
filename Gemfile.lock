@@ -13,6 +13,12 @@ GIT
     arriba (0.6.1)
       activesupport
 
+GIT
+  remote: https://github.com/alces-software/rpam-ruby19.git
+  revision: 38f8ce00bd72887be80e96b34b45525d372b185b
+  specs:
+    rpam-ruby19 (1.3.0)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -30,7 +36,6 @@ GEM
     i18n (0.6.1)
     multi_json (1.7.1)
     rake (10.0.3)
-    rpam-ruby19 (1.2.1)
     rspec (2.13.0)
       rspec-core (~> 2.13.0)
       rspec-expectations (~> 2.13.0)
@@ -57,9 +62,12 @@ DEPENDENCIES
   arriba!
   daemon-kit
   rake
-  rpam-ruby19
+  rpam-ruby19!
   rspec
   simplecov
 
+RUBY VERSION
+   ruby 2.2.1p85
+
 BUNDLED WITH
-   1.10.6
+   1.13.3
